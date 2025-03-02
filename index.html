@@ -1,0 +1,518 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Unidades Residenciales</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Page -->
+        <div id="loginPage" class="container mt-5">
+            <div class="row mb-3">
+                <div class="col-12 text-start">
+                    <button type="button" id="adminBtn" class="btn btn-sm btn-outline-secondary">Administración</button>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <h1 id="siteName">Gestión Residencial</h1>
+                    <div class="card">
+                        <div class="card-body">
+                            <h3 class="card-title mb-4">Iniciar Sesión</h3>
+                            <form id="loginForm">
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" id="username" placeholder="Usuario" required>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Page -->
+        <div id="adminPage" class="container mt-4" style="display:none;">
+            <div class="row mb-4">
+                <div class="col-12 d-flex justify-content-between align-items-center">
+                    <h2>Administración de Usuarios</h2>
+                    <button id="adminLogoutBtn" class="btn btn-outline-danger">Cerrar Sesión</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Agregar/Editar Usuario</h4>
+                            <form id="userForm">
+                                <input type="hidden" id="editUserId">
+                                <div class="mb-3">
+                                    <label for="userUsername" class="form-label">Nombre de Usuario</label>
+                                    <input type="text" class="form-control" id="userUsername" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="userPassword" class="form-label">Contraseña</label>
+                                    <input type="password" class="form-control" id="userPassword" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="residentialName" class="form-label">Nombre de la Unidad Residencial</label>
+                                    <input type="text" class="form-control" id="residentialName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="logoUpload" class="form-label">Logo (opcional)</label>
+                                    <input type="file" class="form-control" id="logoUpload" accept="image/*">
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <button type="button" id="cancelEditBtn" class="btn btn-secondary" style="display:none;">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">Usuarios Registrados</h4>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Usuario</th>
+                                            <th>Nombre Unidad</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersList">
+                                        <!-- User list will be populated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div id="mainApp" style="display:none;">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">
+                        <span id="navbarSiteName">Unidad Residencial</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#" data-section="visitantes">Control de Visitantes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="paquetes">Control de Paquetes</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-section="residentes">Control de Residentes</a>
+                            </li>
+                        </ul>
+                        <div class="d-flex">
+                            <button id="mainLogoutBtn" class="btn btn-outline-light">Cerrar Sesión</button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container mt-4">
+                <!-- Visitantes Section -->
+                <div id="visitantesSection" class="app-section">
+                    <h2 class="mb-4">Control de Visitantes</h2>
+                    
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#registroVisitantes">Registro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#visitantesActivos">Visitantes Activos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#historialVisitantes">Historial</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div id="registroVisitantes" class="tab-pane fade show active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Registrar Visitante</h4>
+                                    <form id="visitanteForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="nombreVisitante" class="form-label">Nombre Completo</label>
+                                                <input type="text" class="form-control" id="nombreVisitante" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="documentoVisitante" class="form-label">Número de Documento</label>
+                                                <input type="text" class="form-control" id="documentoVisitante">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="apartamentoVisita" class="form-label">Apartamento que Visita</label>
+                                                <input type="text" class="form-control" id="apartamentoVisita" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="autorizaVisita" class="form-label">Quien Autoriza</label>
+                                                <input type="text" class="form-control" id="autorizaVisita" required>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="medioTransporte" class="form-label">Medio de Transporte</label>
+                                                <select class="form-select" id="medioTransporte" required>
+                                                    <option value="">Seleccionar</option>
+                                                    <option value="Peaton">Peatón</option>
+                                                    <option value="Bicicleta">Bicicleta</option>
+                                                    <option value="Patineta">Patineta</option>
+                                                    <option value="Carro">Carro</option>
+                                                    <option value="Moto">Moto</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3" id="placaContainer" style="display:none;">
+                                                <label for="placaVehiculo" class="form-label">Placa del Vehículo</label>
+                                                <input type="text" class="form-control" id="placaVehiculo">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="observacionesVisita" class="form-label">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesVisita" rows="2"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Registrar Ingreso</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="visitantesActivos" class="tab-pane fade">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Visitantes Actualmente en la Unidad</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Apartamento</th>
+                                                    <th>Hora Ingreso</th>
+                                                    <th>Medio</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="activeVisitorsList">
+                                                <!-- Active visitors will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="historialVisitantes" class="tab-pane fade">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="card-title mb-0">Historial de Visitantes</h4>
+                                        <div>
+                                            <button id="exportPdfVisitantes" class="btn btn-sm btn-outline-danger me-2">Exportar PDF</button>
+                                            <button id="exportExcelVisitantes" class="btn btn-sm btn-outline-success">Exportar Excel</button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="searchVisitantesHistorial" placeholder="Buscar en historial de visitantes...">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Documento</th>
+                                                    <th>Apartamento</th>
+                                                    <th>Ingreso</th>
+                                                    <th>Salida</th>
+                                                    <th>Medio</th>
+                                                    <th>Placa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="historyVisitorsList">
+                                                <!-- Visitor history will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Paquetes Section -->
+                <div id="paquetesSection" class="app-section" style="display:none;">
+                    <h2 class="mb-4">Control de Paquetes</h2>
+                    
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#registroPaquetes">Registro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#paquetesPendientes">Pendientes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#historialPaquetes">Historial</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div id="registroPaquetes" class="tab-pane fade show active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Registrar Paquete</h4>
+                                    <form id="paqueteForm">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="destinatarioPaquete" class="form-label">Destinatario</label>
+                                                <input type="text" class="form-control" id="destinatarioPaquete" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="apartamentoPaquete" class="form-label">Apartamento</label>
+                                                <input type="text" class="form-control" id="apartamentoPaquete" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="remitentePaquete" class="form-label">Remitente/Empresa</label>
+                                            <input type="text" class="form-control" id="remitentePaquete" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="observacionesPaquete" class="form-label">Observaciones</label>
+                                            <textarea class="form-control" id="observacionesPaquete" rows="2"></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Registrar Paquete</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="paquetesPendientes" class="tab-pane fade">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Paquetes Pendientes por Entregar</h4>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="searchPaquete" placeholder="Buscar por destinatario, apartamento, remitente...">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Destinatario</th>
+                                                    <th>Apartamento</th>
+                                                    <th>Remitente</th>
+                                                    <th>Fecha Recibido</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pendingPackagesList">
+                                                <!-- Pending packages will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="historialPaquetes" class="tab-pane fade">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h4 class="card-title mb-0">Historial de Paquetes</h4>
+                                        <div>
+                                            <button id="exportPdfPaquetes" class="btn btn-sm btn-outline-danger me-2">Exportar PDF</button>
+                                            <button id="exportExcelPaquetes" class="btn btn-sm btn-outline-success">Exportar Excel</button>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="searchPaquetesHistorial" placeholder="Buscar en historial de paquetes...">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Destinatario</th>
+                                                    <th>Apartamento</th>
+                                                    <th>Remitente</th>
+                                                    <th>Recibido</th>
+                                                    <th>Entregado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="historyPackagesList">
+                                                <!-- Package history will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Residentes Section -->
+                <div id="residentesSection" class="app-section" style="display:none;">
+                    <h2 class="mb-4">Control de Residentes</h2>
+                    
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-bs-toggle="tab" href="#registroResidentes">Registro</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" href="#listadoResidentes">Listado</a>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div id="registroResidentes" class="tab-pane fade show active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title" id="residenteFormTitle">Registrar Residente</h4>
+                                    <form id="residenteForm">
+                                        <input type="hidden" id="editResidenteId">
+                                        <div class="mb-3">
+                                            <label for="nombreResidente" class="form-label">Nombre Completo</label>
+                                            <input type="text" class="form-control" id="nombreResidente" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="documentoResidente" class="form-label">Número de Documento</label>
+                                            <input type="text" class="form-control" id="documentoResidente">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="tipoResidente" class="form-label">Tipo</label>
+                                                <select class="form-select" id="tipoResidente" required>
+                                                    <option value="">Seleccionar</option>
+                                                    <option value="Propietario">Propietario</option>
+                                                    <option value="Inquilino">Inquilino</option>
+                                                    <option value="Residente">Residente</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="torre" class="form-label">Torre/Bloque</label>
+                                                <input type="text" class="form-control" id="torre" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="apartamento" class="form-label">Apartamento</label>
+                                            <input type="text" class="form-control" id="apartamento" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Placas de Vehículos</label>
+                                            <div id="vehiclePlatesList"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="addVehiclePlateBtn">
+                                                <i class="bi bi-plus-circle"></i> Agregar Placa
+                                            </button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Parqueaderos Asignados</label>
+                                            <div id="parkingSpotsList"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="addParkingSpotBtn">
+                                                <i class="bi bi-plus-circle"></i> Agregar Parqueadero
+                                            </button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="cuartoUtil" class="form-label">Cuarto Útil</label>
+                                            <input type="text" class="form-control" id="cuartoUtil">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Familiares que Residen</label>
+                                            <div id="familyMembersList"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="addFamilyMemberBtn">
+                                                <i class="bi bi-plus-circle"></i> Agregar Familiar
+                                            </button>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Visitantes Autorizados</label>
+                                            <div id="authorizedVisitorsList"></div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" id="addAuthorizedVisitorBtn">
+                                                <i class="bi bi-plus-circle"></i> Agregar Visitante
+                                            </button>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
+                                            <button type="button" id="cancelEditResidenteBtn" class="btn btn-secondary" style="display:none;">Cancelar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="listadoResidentes" class="tab-pane fade">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Listado de Residentes</h4>
+                                    <div class="mb-3">
+                                        <input type="text" class="form-control" id="searchResidente" placeholder="Buscar por nombre, apartamento, placa, parqueadero, cuarto útil...">
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nombre</th>
+                                                    <th>Tipo</th>
+                                                    <th>Torre</th>
+                                                    <th>Apto</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="residentesList">
+                                                <!-- Residents will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Resident Detail Modal -->
+                    <div class="modal fade" id="residenteDetailModal" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Detalles del Residente</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" id="residenteDetailContent">
+                                    <!-- Resident details will be populated here -->
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
